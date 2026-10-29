@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sachenrecht – Lernapp</title>
+<style>
+:root{--bg:#f7f6f2;--card:#fff;--tx:#1d1d1b;--mut:#6b6b66;--ac:#2f6f62;--ac2:#e3efec;--bd:#dcdad2;--ok:#2f7d4f;--no:#b5472f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171716;--card:#222221;--tx:#ecebe6;--mut:#9c9b94;--ac:#6fb8a8;--ac2:#25332f;--bd:#3a3a37;--ok:#6fc08d;--no:#e08a73}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+.w{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:4px 0 2px}.sub{color:var(--mut);font-size:13px;margin-bottom:12px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.chip{flex:none;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:99px;padding:6px 12px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.bar{height:6px;background:var(--bd);border-radius:9px;margin:10px 0 4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+.st{display:flex;justify-content:space-between;color:var(--mut);font-size:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:20px;margin:14px 0;min-height:200px}
+.tag{font-size:11px;color:var(--ac);background:var(--ac2);padding:2px 8px;border-radius:9px;display:inline-block;margin-bottom:10px}
+.q{font-size:18px;font-weight:600}.a{margin-top:14px;padding-top:14px;border-top:1px dashed var(--bd)}
+.btn{width:100%;padding:13px;border-radius:12px;border:0;font-size:15px;cursor:pointer;background:var(--ac);color:#fff}
+.row{display:flex;gap:8px}.row .btn{flex:1}.b2{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.ok{background:var(--ok)}.no{background:var(--no)}
+.nav{display:flex;justify-content:space-between;margin-top:10px}.lnk{background:none;border:0;color:var(--mut);font-size:13px;cursor:pointer;padding:6px}
+.pg{color:var(--mut);font-size:12px;margin-left:6px}
+</style></head><body><div class="w">
+<h1>Sachenrecht – Lernapp</h1><div class="sub">Skript Seite 1–20 · Frage antippen, Antwort aufdecken, bewerten</div>
+<div class="chips" id="chips"></div>
+<div class="bar"><i id="pb"></i></div><div class="st"><span id="s1"></span><span id="s2"></span></div>
+<div class="card" id="card"></div>
+<div id="act"></div>
+<div class="nav"><button class="lnk" id="prev">← Zurück</button><button class="lnk" id="shuf">Mischen</button><button class="lnk" id="reset">Fortschritt löschen</button><button class="lnk" id="next">Weiter →</button></div>
+</div>
+<script>
+const D=[
+["Einleitung","Wo wird das Sachenrecht im ZGB geregelt?","Im 3. Buch des ZGB, Artt. 810–1172."],
+["Einleitung","Welche weiteren Rechtsquellen regeln in Italien das Sachenrecht?","Das Grundbuchgesetz und die Verfassung (Art. 42: Privateigentum wird anerkannt und geschützt)."],
+["Einleitung","Was regelt das Sachenrecht?","Die dinglichen Rechte, also die Rechte einer Person an einer Sache. Es regelt, wem eine Sache gehört, wer sie benutzen und wer über sie verfügen kann."],
+["Die Sache","Was versteht man laut ZGB unter einer Sache?","Art. 810 ZGB: Sachen sind Dinge, die Gegenstand von Rechten sein können. Das sind Dinge, die vom Menschen wirtschaftlich genutzt und seiner Herrschaft unterworfen werden können."],
+["Die Sache","Welche Sachen werden vom Sachenrecht rechtlich geregelt und warum?","Dinge, die wirtschaftlich genutzt und der menschlichen Herrschaft unterworfen werden können (z. B. Handy, Auto, Zuchthund). Nur sie können Gegenstand von Rechten sein."],
+["Die Sache","Was sind freie Güter? Erklären Sie den Begriff und nennen Sie Beispiele.","Freie Güter sind keiner Herrschaft unterworfen und können nicht wirtschaftlich genutzt werden. Sie können allgemein genutzt werden, die Natur stellt sie her, sie haben keinen Preis.<br>Beispiele: Regenwasser, Sonne, Mond, Luft, Wolken, Meerwasser."],
+["Die Sache","Warum regelt das ZGB die freien Güter nicht?","Weil sie nicht Gegenstand von Rechten sein können."],
+["Die Sache","Freie Güter gehören nicht zu den Sachen im privatrechtlichen Sinn. Wann werden diese aber rechtlich interessant?","Wenn Teile abgetrennt und einem Sondergebrauch zugeführt werden. Beispiel: Sauerstoff in der Luft ist ein freies Gut, Sauerstoff in einer Tauchflasche ist ein wirtschaftlich genutztes Gut und damit eine Sache."],
+["Die Sache","Finden Sie Beispiele für die Abtrennung freier Güter, die rechtlich interessant werden.","• Sonne → Solarpanele (Strom)<br>• Wasser → abgefülltes Trinkwasser<br>• Luft/Wasser → Energie (z. B. Windrad, Wasserkraftwerk)"],
+["Einteilung","Wie können die Sachen eingeteilt werden? Zählen Sie die Gegensatzpaare mit Beispielen auf.","• beweglich ⇔ unbeweglich (Kleider, Geld ⇔ Grundstücke, Gebäude)<br>• körperlich ⇔ unkörperlich (Handy ⇔ Rechte, Dienstleistungen)<br>• vertretbar ⇔ unvertretbar (Obst, Geld ⇔ Bild von Monet)<br>• verbrauchbar ⇔ unverbrauchbar (Lebensmittel ⇔ MP3-Player)<br>• Hauptsache ⇔ Nebensache (Kleid ⇔ Knöpfe)<br>• einfach ⇔ zusammengesetzt (lebende Tiere ⇔ Auto)<br>• Sachen des Staates ⇔ privater Personen (öffentl. Straßen ⇔ Fahrrad)<br>Weitere Kategorien: Früchte, Sachgesamtheiten."],
+["Einteilung","Wie unterscheiden sich die unbeweglichen von den beweglichen Sachen?","Unbeweglich: Boden und alles, was mit ihm verbunden ist (Bäume, Häuser, Kioske, Quellen, Wasserläufe). Beweglich: alle übrigen Sachen, auch der elektrische Strom.<br>Unterschied z. B. bei der Eigentumsübertragung: Bei unbeweglichen Sachen ist ein schriftlicher Vertrag (Notar) vorgeschrieben, bei beweglichen nicht."],
+["Einteilung","Warum bilden Autos, Schiffe usw. eine Ausnahme? Erklären Sie.","Es sind bewegliche Sachen, die in öffentlichen Registern eingetragen sind (Autos, Schiffe, Flugzeuge, Motorräder). Beim Eigentumsübertrag werden sie wie unbewegliche Sachen behandelt."],
+["Einteilung","Wie unterscheiden sich die körperlichen von den unkörperlichen Sachen?","Körperliche (materielle) Sachen sind sinnlich wahrnehmbar. Unkörperliche (immaterielle) umfassen Rechte (z. B. Forderungen), Dienstleistungen, Werke der Wissenschaft (Erfindungen) und der Kunst (Urheberrecht)."],
+["Einteilung","Wie unterscheiden sich die vertretbaren von den unvertretbaren Sachen?","Vertretbare sind nach Maß, Zahl oder Gewicht bestimmt und jederzeit durch Gleichartige ersetzbar (Weizen, Äpfel, Aktien, Geld). Unvertretbare gibt es nur als Einzelstücke oder in wenigen Exemplaren (Hauskatze Molly, handgearbeiteter Schmuck)."],
+["Einteilung","Wie unterscheiden sich die verbrauchbaren von den unverbrauchbaren Sachen?","Verbrauchbare werden durch den Gebrauch verbraucht (Lebensmittel). Unverbrauchbare erlauben mehrfachen Gebrauch, auch wenn sie abnutzbar sind (MP3-Player, Schultasche)."],
+["Einteilung","Unterscheiden Sie die Hauptsache von der Nebensache.","Nebensachen (Zubehör) sind selbstständige bewegliche oder unbewegliche Sachen, die dem wirtschaftlichen Zweck der Hauptsache dienen (Einrichtung einer Bar, Rettungsboote) oder ihre Zierde sind (Statue im Park). Ohne andere Vereinbarung folgt das Zubehör rechtlich der Hauptsache: Wird das Haus verkauft, geht auch die Garage über."],
+["Einteilung","Wie unterscheiden sich die einfachen von den zusammengesetzten Sachen?","Einfache Sachen verlieren durch Teilung ihre wirtschaftliche Bestimmung (Pflanze, Tier; Unteilbarkeit kann auch gesetzlich sein, z. B. Geschlossener Hof). Zusammengesetzte bestehen aus mehreren Teilen, die auch für sich bestehen könnten, aber aus wirtschaftlichen/funktionellen Gründen zusammenwirken (Motor eines Autos, Haustüre)."],
+["Einteilung","Was sind Früchte und welche Arten werden unterschieden?","Früchte sind zukünftige Sachen, die aus einer produktiven Sache hervorgehen.<br>• Natürliche Früchte (Honig, Eier, Bodenschätze): entstehen direkt aus anderen Sachen und werden mit der Abtrennung selbstständig.<br>• Zivilfrüchte (Zinsen, Miet-/Pachtzins): Gegenleistung für die Überlassung einer Sache an Dritte.<br>Der Eigentümer der Hauptsache ist grundsätzlich auch Eigentümer der Früchte (außer bei Verpachtung oder Fruchtgenussrecht)."],
+["Einteilung","Erklären Sie den Begriff Sachgesamtheiten.","Mehrere bewegliche Sachen mit derselben Bestimmung und demselben Eigentümer (Herde, Bibliothek, Betrieb). Verfügungen betreffen grundsätzlich die gesamte Sachgesamtheit, es kann aber auch über einzelne Sachen verfügt werden (Verkauf eines Buches aus der Bibliothek)."],
+["Staatsgüter","Nennen Sie Beispiele für öffentliche Güter und unverfügbares Staatsvermögen.","Öffentliches Gut: Strände, Häfen, Flüsse (müssen dem Staat gehören); Flughäfen, Autobahnen, Museen (können dem Staat gehören).<br>Unverfügbares Staatsvermögen: Wälder, Bergwerke, Kunstwerke, Kriegsschiffe, Kasernen."],
+["Staatsgüter","Warum sind die Sachen des Staates einer besonderen rechtlichen Regelung unterworfen?","• Sie dienen dem öffentlichen Gebrauch (Straßen, Häfen).<br>• Bei Bodenschätzen (Erdgas) stehen die wirtschaftlichen Vorteile der Allgemeinheit zu.<br>• Kulturgüter (Museen, Altertümer) sind von der Allgemeinheit zu schützen und kommen ihr zugute.<br>• Sie dienen dem Staat zur Ausübung seiner Aufgaben (Amtsgebäude, Kasernen)."],
+["Staatsgüter","Kann ein Privater ein öffentliches Gut oder ein unverfügbares Staatsvermögen kaufen? Begründen Sie.","Nein. Beide sind grundsätzlich unveräußerlich und nicht ersitzbar. Mit Genehmigung kann aber der Gebrauch überlassen werden (Strand für eine Badeanstalt, Abbau von Bodenschätzen). Fällt die Zweckbestimmung weg (Flughafen, Kaserne), wird die Sache verfügbares Staatsvermögen und kann frei verkauft werden."],
+["Eigentum","Wo wird das Eigentumsrecht geregelt?","Art. 832 ZGB definiert das Eigentum. Die Grenzen (Nachbarrecht) stehen in den Artt. 873–908; Privateigentum wird in Art. 42 der Verfassung geschützt.<br><i>Hinweis: In deinem Blatt steht „Art. 873–908“. Das sind die Beschränkungen; die Regelung des Eigentums selbst beginnt bei Art. 832.</i>"],
+["Eigentum","Wer ist laut Art. 832 ZGB Eigentümer?","Der Eigentümer hat das Recht, die Sache vollständig (zu 100 %) und ausschließlich (alleine) zu nutzen (verwenden, genießen) und darüber zu verfügen (weitergeben, belasten), allerdings innerhalb der von der Rechtsordnung (Verfassung, Gesetze usw.) festgesetzten Grenzen. Eigentum ist das umfassendste Herrschaftsrecht an einer Sache."],
+["Eigentum","Erklären Sie die vier Merkmale des Eigentums genauer, mit Beispielen!","• <b>Nutzung:</b> gebrauchen (bewohnen), nicht gebrauchen (leer stehen lassen), verwandeln (in eine Garage), zerstören (abreißen); ihm gehören auch die Früchte (Mietzins).<br>• <b>Verfügung:</b> verkaufen, verschenken, vermachen, mit dinglichen Rechten belasten (Hypothek, Wohnrecht).<br>• <b>Vollständigkeit:</b> der Eigentümer kann alles tun, was nicht durch Gesetz oder Vereinbarung untersagt ist (z. B. Fruchtgenuss der Mutter; fällt die Einschränkung weg, hat das Eigentum wieder seine ursprüngliche Ausdehnung).<br>• <b>Ausschließlichkeit:</b> alle anderen können ausgeschlossen werden (einen Gast der Wohnung verweisen; sichtbar durch Haustür oder Zaun)."],
+["Grenzen","Welche Grenzen des Eigentums im öffentlichen Interesse gibt es?","Entzug durch Gesetz: Enteignung, Verstaatlichung, Beschlagnahme. Beschränkung durch Bauvorschriften (Bauleitpläne), Umwelt-, Landschafts- und Denkmalschutz, Geschlossenen Hof u. a."],
+["Grenzen","Erklären Sie diese und führen Sie jeweils ein Beispiel an.","• <b>Enteignung:</b> aus Gründen des öffentlichen Interesses gegen angemessene Entschädigung (Bau von Straßen, Eisenbahnlinien).<br>• <b>Verstaatlichung:</b> von Unternehmen mit wesentlichen öffentlichen Diensten, Energieerzeugung oder Monopolstellung; mit Entschädigung (Elektrizitätswerke 1962).<br>• <b>Beschlagnahme:</b> vorübergehender Entzug des Gebrauchs in schwerwiegenden, dringlichen Notfällen, gegen angemessene Entschädigung (Hotels für Obdachlose nach einem Erdbeben).<br>• <b>Bauvorschriften:</b> Im Bauleitplan als Bauland/landwirtschaftliches Grün ausgewiesen, also keine Gewerbetätigkeit; für Neu-, Um-, Anbau braucht es eine Baugenehmigung der Gemeinde."],
+["Grenzen","Welche Grenzen des Eigentums im privaten Interesse sieht das ZGB vor?","Die Nachbarrechte (meist Pflichten gegenüber dem Nachbarn): Zutrittsrecht auf fremden Grund, Schikaneverbot, Verbot von Einwirkungen, Einhaltung der Grenzabstände."],
+["Grenzen","Erklären Sie diese und führen Sie jeweils ein Beispiel an.","• <b>Zutrittsrecht:</b> auf fremden Grund zu bestimmten Zwecken (Jagd/Fischerei mit Konzession, Reparatur grenznaher Gebäude).<br>• <b>Schikaneverbot:</b> Eigentum darf nicht nur zum Schaden anderer gebraucht werden (Radio auf höchster Lautstärke, um den Nachbarn zu belästigen).<br>• <b>Einwirkungen:</b> Rauch, Wärme, Lärm, Abgase, Erschütterungen nur im tolerierbaren Ausmaß, ortsübliche Umstände zählen (Fabriklärm im Luftkurort nicht, im Industriegebiet schon).<br>• <b>Grenzabstände:</b> Gebäude, Mauern, Hecken, Kanäle; ZGB mindestens 3 m, Bauleitpläne oft mehr (meist 5 m)."],
+["Besitz","Unterscheiden Sie die Begriffe Eigentum und Besitz.","Eigentum ist das umfassendste Herrschaftsrecht an einer Sache (ein dingliches Recht). Besitz ist kein Recht, sondern eine reine Tatsache: die tatsächliche Herrschaft über eine Sache, an die das Gesetz bestimmte Rechtswirkungen knüpft. Der Besitzer hat kein Recht auf die Sache."],
+["Besitz","Wie definiert das ZGB den Begriff Besitz?","Art. 1140/1: Besitz ist die tatsächliche Herrschaft über eine Sache. Besitzer ist, wer die Sache in seiner Gewalt hat, begleitet vom Willen, sie als die eigene zu behandeln."],
+["Besitz","Ist Besitz ohne Eigentum möglich? Beschreiben Sie.","Ja. Normalerweise ist der Besitzer auch Eigentümer (er fährt sein Auto oder hat es in der Garage). Aber: Der Bestohlene bleibt Eigentümer, der Dieb hat den Besitz am gestohlenen Gut."],
+["Besitz","Welche Rechtswirkungen sind für den Besitz im ZGB vorgesehen?","• <b>Eigentumserwerb</b> (wichtigste Wirkung), z. B. durch Ersitzung (Gruber und der Parkplatz nach 23 Jahren).<br>• <b>Früchte:</b> Der gutgläubige Besitzer darf die bis zur Klage angefallenen Früchte behalten; der bösgläubige muss sie zurückgeben, erhält aber Ernte- und Bearbeitungskosten ersetzt.<br>• <b>Ausgaben</b> für außerordentliche Ausbesserungen (Art. 1150) werden auch dem bösgläubigen Besitzer erstattet (neue Bäume in der Obstwiese).<br>• <b>Gerichtlicher Besitzschutz.</b>"],
+["Besitz","Warum erfährt der Besitzer einen gerichtlichen Schutz gegenüber dem Eigentümer der Sache?","Der Staat schützt den aktuellen Besitzer, auch wenn er nicht schützenswert erscheint. Hauptzweck ist die Wahrung der öffentlichen Ordnung, weniger der Schutz von Einzelinteressen. Selbstjustiz soll verhindert werden (Beispiel: Polizei lässt das Fahrrad bei der Freundin des Diebes, bis ein Gericht die Eigentumsfrage klärt)."],
+["Besitz","Erklären Sie den Begriff Innehabung.","Der Inhaber hat die Sache auch in tatsächlicher Gewalt, aber ohne den Willen, sich als Eigentümer zu verhalten (z. B. Garderobier, Mieter, Mechaniker mit dem Kundenauto, Kurierdienst, Bibliotheksbuch). Bloße Inhaber können nicht ersitzen."]
+];
+const ch=["Alle",...new Set(D.map(x=>x[0]))];let cur="Alle",list=[],i=0,open=false,st={};
+try{st=JSON.parse(localStorage.getItem("sr_st")||"{}")}catch(e){}
+const $=id=>document.getElementById(id);
+function save(){try{localStorage.setItem("sr_st",JSON.stringify(st))}catch(e){}}
+function build(){list=D.map((x,n)=>n).filter(n=>cur=="Alle"||D[n][0]==cur);i=0;open=false;draw()}
+function chips(){$("chips").innerHTML=ch.map(c=>`<button class="chip${c==cur?" on":""}" data-c="${c}">${c}</button>`).join("");
+document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{cur=b.dataset.c;chips();build()})}
+function draw(){const n=list[i],d=D[n];
+$("card").innerHTML=`<span class="tag">${d[0]}</span><div class="q">${d[1]}</div>${open?`<div class="a">${d[2]}</div>`:""}`;
+$("card").onclick=()=>{open=true;draw()};
+$("act").innerHTML=open?`<div class="row"><button class="btn no" id="n">Nochmal</button><button class="btn ok" id="y">Gewusst</button></div>`:`<button class="btn" id="sh">Antwort zeigen</button>`;
+if(open){$("y").onclick=()=>mark(1);$("n").onclick=()=>mark(0)}else $("sh").onclick=()=>{open=true;draw()};
+const k=list.filter(x=>st[x]==1).length;
+$("pb").style.width=(100*k/list.length)+"%";$("s1").textContent=`Frage ${i+1} von ${list.length}`;$("s2").textContent=`${k} gewusst`}
+function mark(v){st[list[i]]=v;save();go(1)}
+function go(d){i=(i+d+list.length)%list.length;open=false;draw()}
+$("next").onclick=()=>go(1);$("prev").onclick=()=>go(-1);
+$("shuf").onclick=()=>{list.sort(()=>Math.random()-.5);i=0;open=false;draw()};
+$("reset").onclick=()=>{st={};save();draw()};
+chips();build();
+</script></body></html>
